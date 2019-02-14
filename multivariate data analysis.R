@@ -1,8 +1,5 @@
-.98^2
-.98/13
-
 # GSP_raw
-setwd("/Users/chanheelee/Desktop/??????/Multivariate Data Analysis/raw data")
+setwd("/Users/chanheelee/Desktop/lecture/Multivariate Data Analysis/raw data")
 gsp<-read.table("GSP_RAW.txt", header=T)
 dim(gsp)
 for (i in 1:13){

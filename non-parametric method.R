@@ -60,9 +60,12 @@ walsh<-function(x){
   }
   return(w.mean)
 }
-walsh(x)
+median(walsh(x))
+
+
 
 wilcox.test(x, mu=28.95, conf.int = T, conf.level = 0.95)
+library(BSDA)
 dotplot(x)
 # ex7
 x<-c(19, 31, 1.3, 1.5, 43, 14, 14)
@@ -163,9 +166,8 @@ wilcox.test(y,x,alternative = "two.sided")
 y<-c(102,86,98,109,92)
 x<-c(81,165,97,134,92,87,114)
 wilcox.test(y,x,alternative = "two.sided", conf.int = T, conf.level = .95)
-sort(c(x,y))
-sort(x)
-sort(y)
+wilcox.test(y,x,alternative = "two.sided", conf.int = T, conf.level = .952)
+sort(as.vector(tab(x,y)))[30]
 
 # ex4
 x<-c(167,149,137,178,179,155,164,104,151,150)
@@ -177,65 +179,164 @@ wilcox.test(y,x,alternative = "two.sided",conf.int = T, conf.level = .9)
 # ex5
 x<-c(6.6,5.8,7.8,5.7,6,8.4,8.8,8.4,7.3,5.8,5.8,6.5)
 y<-c(6.4,5.8,7.4,5.5,6.3,7.8,8.6,8.2,7,4.9,5.9,6.5)
-wilcox.test(y,x,alternative="less")
+sort(c(x,y))
+length(x)
+length(y)
+sort(x, decreasing = T)
+sort(y)
+tab<-function(x, y){
+  x<-sort(x, decreasing = T)
+  y<-sort(y)
+  tab<-matrix(rep(0, length(x)*length(y)), length(x), length(y))
+  for (i in 1:length(x)){
+    for (j in 1:length(y)){
+      tab[i,j]<-y[j]-x[i]
+    }
+  }
+  return(tab)
+}
+damn<-as.vector(tab(x,y))
+da<-sort(damn)
+da
+da[72]
+
+da[103]
+da[42]
+wilcox.test(y,x,alternative="less", exact = F)
+65.5+12*13/2
 wilcox.test(y,x,alternative="two.sided",conf.int = T, conf.level = 0.9)
 
 # ex6
 y<-c(14.6,15.8,16.4,14.6,14.9,14.3,14.7,17.2,16.8,16.1)
+sort(c(x,y))
 x<-c(15.5,17.9,15.5,16.7,17.6,16.8,16.7,16.8,17.2,18)
 wilcox.test(y,x,alternative = "greater")
 
 # ex7
 y<-c(5.6,4.6,6.8,4.9,6.1,5.3,4.5,5.8,5.4,4.7)
 x<-c(7.2,8.1,5.1,7.3,6.9,7.8,5.9,6.7,6.5,7.1)
-wilcox.test(y,x,alternative='two.sided')
+wilcox.test(x,y,alternative='two.sided')
+sort(c(x,y))
 
 # ex8
 x<-c(90.4,77.2,75.9,83.2,84,90.2,87.6,67.4,77.6,69.3,83.3,72.7)
 y<-c(92.7,78.9,82.5,88.6,95,94.4,73.1,88.3,90.4,86.5,84.7,87.5)
+sort(c(x,y))
 wilcox.test(y,x,alternative = "greater")
-wilcox.test(y,x, alternative = "two.sided", conf.int = T, conf.level=.95)
+wilcox.test(y,x, alternative = "two.sided", conf.int = T, conf.level=.955)
+sort(x, decreasing = T)
+sort(y)
+sa<-as.vector(tab(x,y))
+sa<-sort(sa)
+sa[37]
+sa[108]
+sa
 
 # ex9
 x<-c(2.1,5.3,1.4,4.6,.9)
+sort(x, decreasing = T)
 y<-c(1.9,.5,2.8,3.1)
+sort(y)
+tab(x,y)
 wilcox.test(y,x,alternative="two.sided", conf.int=T, conf.level=.9)
-
+aa<-as.vector(tab(x,y))
+aa<-sort(aa)
+aa
 # ex10
 x<-c(158,149,160,155,164,138,163,159,165,145,150,161,132,155,146,159)
 y<-c(164,158,163,160,172,147,167,169,173,147,156,164,133,161,154,170)
-new_y<-y-5
-wilcox.test(new_y,x,alternative = "greater")
+new_y<-y-x-5
+wilcox.test(new_y,alternative = "greater")
 
 # ex11
 x<-c(66,80,69,52,75)
+sort(x, decreasing = T)
 y<-c(71,82,68,56,73)
-wilcox.test(y,x,alternative = "two.sided", conf.int = T,conf.level = .9)
+sort(y)
+a<-y-x
+dotplot(a)
+median(y-x)
+wilcox.test(y-x,mu=0,alternative = "two.sided", conf.int = T,conf.level = .875)
+median(walsh(y-x))
+
 
 # ex12
 x<-c(463,462,462,456,450,426,418,415,409,402)
 y<-c(523,494,461,535,476,454,448,408,470,437)
+boxplot(y-x)
+hist(y-x, nclass=10, prob=T)
+dotplot(y-x)
+median(y-x)
 wilcox.test(y-x, alternative = "greater")
 wilcox.test(y-x, alternatice="two.sided", conf.int = T, conf.level = .95)
-
+w.c<-walsh(y-x)
+w.c<-sort(w.c)
+w.c[28]
+w.c[9]; w.c[47]
 # ex13
 y<-c(140,90,125,130,95,121,85,97,131,110)
 x<-c(130,87,110,132,96,120,86,90,129,100)
-wilcox.test(y-x, alternative = "greater")
-wilcox.test(y-x, alternative="two.sided", conf.int = T, conf.level = .9)
+dotplot(y-x)
+median(y-x)
+sort(y-x)
 
+walsh(y-x)
+wilcox.test(y-x, alternative = "greater")
+1+2+3
+wilcox.test(y-x, alternative="two.sided", conf.int = T, conf.level = .8946)
+
+s.w<-sort(walsh(y-x))
+s.w[28]
+1-.0527*2
+s.w[12]
+s.w[44]
 # ex14
-x<-c(70,80,72,76,76,76,72,78,82,64,74,68,84)
-y<-c(68,72,62,70,58,66,68,52,64,72,74,72,74)
-wilcox.test(y-x, alternative = "less")
+x<-c(70,80,72,76,76,76,72,78,82,64,74,92,74,68,84)
+y<-c(68,72,62,70,58,66,68,52,64,72,74,80,74,72,74)
+length(x)
+y-x
+sort(y-x)
+
+hist(y-x)
+library(BSDA)
+dotplot(y-x)
+median(y-x)
+wilcox.test(y-x,mu=0, alternative = "less")
 wilcox.test(y-x, alternative="two.sided", conf.int = T, conf.level = .95)
+
+14*15/4
+(14*15*29-21)/24
+(8.5-52.5)/sqrt(252.875)
+sort(y-x)
+a<-y-x
+c<-which(a==0)
+a<-a[-c]
+length(a)
+w.a<-sort(walsh(a))
+13*14/2
+w.a[46]
+92-74
+w.a[18]
+w.a[74]
+1-0.0239*2
 
 # ex15
 x<-c(18,12,7,21,19,14,8,11,19,16,8,11)
 y<-c(10,10,8,23,13,10,8,13,9,8,8,5)
+sort(y-x)
+hist(y-x)
+dotplot(y-x)
 wilcox.test(y-x, alternative="less")
-wilcox.test(y-x, alternative="two.sided", conf.int = T, conf.level = .9)
-
+wilcox.test(y-x, alternative="two.sided", conf.int = T, conf.level = .8946)
+a<-y-x
+b<-which(a==0)
+b
+a<-a[-b]
+s.a<-sort(walsh(a))
+s.a[28]
+1-0.0527*2
+s.a[12]
+s.a[44]
 ###CH.4 two-sample scale parameter problems###
 
 # ansary-bradley test : non-parametric scale parameter test
@@ -251,15 +352,22 @@ ansari.test(a,b,alternative="less")
 # ex1
 a<-c(.95,.82,.78,.96,.71,.86,.99)
 b<-c(.89,.91,.94,.91,.9,.89)
+sort(c(a,b))
 wilcox.test(b,a,alternative="two.sided")
 ansari.test(b,a,alternative="less")
-
+.365*2
 # ex2
 a<-c(1.9,0.8,1.1,0.1,-0.1,3.4,5.5,1.6,4.6,2)
 b<-c(0.7,-1.6,-0.2,-1.2,0,4.4,3.7,.8,0,3.4)
-wilcox.test(b-a, alternative = "two.sided", conf.int = T, conf.level = 0.95)
-new_b<-b--1.150067 
+median(a); median(b); median(b)-median(a)
+new_b<-b+1.4 
+new_b
+sort(c(a, new_b))
 ansari.test(a,new_b, alternative="two.sided")
+length(a)
+length(new_b)
+.4704*2
+.06+.07+.08+.09+.1+.1
 
 # ex3 moses test
 # user_defined function to perform moses test
@@ -287,39 +395,93 @@ moses.test<-function(x,y,k){
 }
 x<-c(0.97,0.72,1,0.81,0.62,1.32,1.24,.99,.9,.74,.88,.94,1.16,.86,.85,.58,.57,.64,.98,1.09,.92,.78,1.24,1.18)
 y<-c(0.48,0.71,.98,.68,1.18,1.36,.78,1.64)
+x<-x[sample(length(x), length(x), replace=F)]
+length(x)
+y<-y[sample(length(y), length(y), replace=F)]
+y
 moses.test(x,y,4)
 
+matx<-matrix(x, ncol=4, byrow=T)
+vv<-function(x){
+  val<-sum((x-mean(x))^2)
+  return(val)
+}
+matx
+apply(matx, 1, vv)
+
+maty<-matrix(y, ncol=4, byrow=T)
+sort(c(apply(matx, 1, vv),apply(maty, 1, vv)))
+wilcox.test(apply(maty,1,vv), apply(matx,1,vv), alternative = "two.sided")
 # ex4
 x<-c(6.6,5.8,5.4,5.1,5,4.3,3.9,3.3,2.4,1.7)
 y<-c(11.7,9.5,9.4,8.7,8.2,7.7,7.4,7.4,7.1,6.9,6.8,6.3,5,4.2,4.1,2.2)
+x<-x[sample(length(x), length(x), replace=F)]
+length(x)
+matx<-matrix(x, nc=5, byrow=T)
+matx
+length(y)
+y<-y[sample(length(y), length(y)-1, replace=T)]
+maty<-matrix(y, nc=5, byrow=T)
+maty
 moses.test(x,y,5)
+apply(matx, 1, vv)
+
+sort(c(apply(matx, 1, vv), apply(maty, 1, vv)))
+wilcox.test(apply(matx, 1, vv), apply(maty, 1, vv), alternative="two.sided")
 
 # ex5
 x<-c(1.2,.2,.3,.9,4.2,0.9,.3,.7,.9,1.1,3,.9,2.3,1.3,.2,1.5,2.1,7.7,20,1.2,3.4,2.2,.1,4.3,.7,.7,1.3,9.8,
      .9,4.7,0,.4,21,12,4.2,2.7,1.7,.5,1,.9,2.1,.1,1.7,1,3.9,1,.5,.7,.2,.9,.9,.8,.5,1.5,1.1,1.1,1.6,1.5,4,4.7,.9)
 y<-c(1.4,1.6,1.4,4.1,2.6,1.1,0.4,1.8,2.2,.3,1.3,1.7,1,1.2,1.4,.5,1.1,1.5,1.1,3.3,2.6,.7,.1,1.6,2.5,.7,1.7,.3,1.9,1,.5)
 length(x);length(y)
-moses.test(x,y,5)
+moses.test(x,y,6)
+x<-x[sample(length(x),60,replace=F)]
+matx<-matrix(x, nc=6, byrow=T)
+y<-y[sample(length(y),30, replace=F)]
+maty<-matrix(y, nc=6, byrow=T)
+matx
+vx<-round(apply(matx, 1, vv),2)
+maty
+vy<-round(apply(maty, 1, vv),2)
+apply(maty, 1, vv)
+
+wilcox.test(apply(maty, 1, vv), apply(matx, 1, vv), alternative = "two.sided")
 
 # ex6
 x<-c(3.42,3.54,3.21,3.63,3.22,3.8,3.7,3.2,3.75,3.31,3.86,4,2.86,2.92,3.59,2.91,3.77,2.7,3.06,3.3)
 y<-c(3.5,4,3.43,3.85,3.84,3.21,3.58,3.94,3.48,3.76,3.87,2.93,4,3.37,3.72,4,3.06,3.92,3.72,3.91)
 length(x)
 length(y)
-moses.test(x,y,4)
+x<-x[sample(length(x), length(x))]
+y<-y[sample(length(y), length(y))]
+length(x)
+length(y)
+matx<-matrix(x, nc=5, byrow=T)
+maty<-matrix(y, nc=5, byrow=T)
+matx; apply(matx, 1, vv)
+maty; apply(maty,1,vv)
+moses.test(x,y,5)
+sort(c(apply(matx, 1, vv), apply(maty, 1, vv)))
+wilcox.test(apply(matx,1,vv), apply(maty, 1, vv), alternative = "two.sided")
 
 # ex7
 x<-c(9,10,4,19,13,12,8,0,13,6,12,5,7)
 y<-c(6,7,3,19,4,12,2,0,6,7,5,0,7)
-wilcox.test(y,x,conf.int = T, conf.level = .95)
-new_y<-y--3.999922 
-ansari.test(new_y, x, alternative = "two.sided")
-
+median(x); median(y); median(y)-median(x)
+y<-y+3
+length(sort(c(x,y)))
+ansari.test(x, y, alternative = "two.sided")
+length(x)
+length(y)
 # ex8
 x<-c(117.1,121.3,127.8,121.9,117.4,124.5,119.5,115.1)
+sort(x)
 y<-c(123.5,125.3,126.5,127.9,122.1,125.6,129.8,117.2)
-wilcox.test(y,x,conf.int = T, conf.level = .95)
-new_y<-y-4.65 
+sort(y)
+median(x); median(y); median(y)-median(x)
+new_y<-y-5.05
+new_y
+sort(c(new_y, x))
 ansari.test(new_y,x,alternative = "less")
 
 
