@@ -58,4 +58,4 @@ Transfer function white noise model을 이용하여 그린스펀의 수수께끼
 
 12. Time series vidualization 
 
-R을 이용한 
+R을 이용한 시각화 방법 
