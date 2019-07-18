@@ -122,7 +122,7 @@ proc reg data=leverage; model at_2=at1-at36; run;
 
 /* there is leverage effect */
 
-/* EGARCH : Unsymmetric model : Ignore normality test*/
+/* EGARCH : symmetric model : Ignore normality test*/
 proc autoreg data=dw2;
 model ret_dw = ret_ko / nlag=(27 30 32) garch=(p=1, q=1, type=exp) maxiter=100;
 output out=garch_out r=resid p=pred lcl=l95 ucl=u95 cev=ht1 cpev=ht2;
