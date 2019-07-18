@@ -64,7 +64,7 @@ DT를 이용한 classification, regression
 
 13. Classification method - Emsembles
 
-앙상블 방법을 이용한 model power 향상
+앙상블 방법을 이용한 predictive power 향상
 -Bagging, boosting, random forest, stacking...
 
 14. Classification - SVM
