@@ -42,5 +42,5 @@ LSTM을 이용한 구글  alphabet 종가예측
 
 11. Fraud detection
 Gaussian Mixture, PCA, feature importance를 이용한 Novelty detection method
-- Gaussian Mixture, E-M algorithm, mixing probability, novelty, PCA, random forest...
+-Gaussian Mixture, E-M algorithm, mixing probability, novelty, PCA, random forest...
 
