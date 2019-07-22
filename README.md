@@ -33,7 +33,7 @@ Classification/Regression based on tree methodology, Advanced predictive tree
 keras를 이용한 MINIST digit classifier
 
 9. CNN
-Alex net (CNN+drop out)을 이용한 ASL(American sign languige) image 분류
+Alex net (CNN+drop out)을 이용한 ASL(American sign language) image 분류
 -convolutional layer, fully connected layer, drop out, Bias-variance tradeoff. overfitting...
 
 10. LSTM
