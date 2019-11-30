@@ -1,0 +1,234 @@
+---
+title: "MDS HW4"
+author: "Chan hee Lee"
+date: '2018 11 18 '
+output: word_document
+---
+$$
+2.\ Problem\ 6.7\ in textbook
+$$
+$$
+a.\ Use\ CFA\ to\ test\ whether\ a\ simple\ 3\ factor\ model\ of\ attitude\ is\ adequate\ to\ explain\ the\ pattern\ of\ correlation\ observed\ in\ the\ data.
+$$
+```{r eval=T, echo=T}
+setwd("/Users/chanheelee/Desktop/lecture/Multivariate Data Analysis/raw data")
+os<-read.csv("ostrom.csv", header=T)
+
+for (i in 1:dim(os)[1]){
+  for (j in 1:dim(os)[1]){
+    os[i,j]<-os[j,i]
+  }
+}
+labels<-c("AT","BT","CT","AL","BL","CL","AG","BG","CG")
+colnames(os)<-labels; rownames(os)<-labels
+os<-as.matrix(os)
+
+library(sem)
+model_os<-specifyModel(file="model_1.txt")
+cfa_os1<-sem(model_os, os, 300)
+summary(cfa_os1)
+```
+$$
+b.\ Introduce\ method\ factors\ into\ the\ model\ in\ part\ a\ and\ test\ to\ see\ whether\ the\ improvement\ in\ fit\ is\ significant.
+$$
+```{r eval=T, echo=T}
+setwd("/Users/chanheelee/Desktop/lecture/Multivariate Data Analysis/raw data")
+model_os2<-specifyModel(file="model_2.txt")
+cfa_os2<-sem(model_os2, os, 300)
+
+summary(cfa_os2)
+anova(cfa_os1, cfa_os2)
+```
+$$
+c.\ Evaluate\ the\ discriminant\ validity\ of\ the\ 3\ factor\ model\ in b.\ Are\ the\ 3\ components\ significantly\ different?\ How\ can\ you\ tell?
+$$
+```{r eval=T, echo=T}
+setwd("/Users/chanheelee/Desktop/lecture/Multivariate Data Analysis/raw data")
+model_os_dvall<-specifyModel(file="model_3.txt")
+
+
+cfa_os_dvall<-sem(model_os_dvall, os, 300)
+anova(cfa_os_dvall, cfa_os2)
+```
+$$
+3.\ Consider\ the\ matrix\ of\ distance
+$$
+$$
+D=\ \begin{bmatrix}
+0\\
+1 & 0\\
+11 & 2 & 0\\
+5 & 3 & 4 & 0\\
+\end{bmatrix}
+$$
+$$
+Cluster\ the\ four\ items\ using\ each\ of\ following\ procedures.
+$$
+$$
+(a)\ Single- linkage\ Hierarchical\ clustering. 
+$$
+```{r eval=T, echo=T}
+D<-matrix(rep(0,16), 4, 4)
+D[2,1]<-1; D[3,1]<-11; D[3,2]<-2; D[4,1]<-5; D[4,2]<-3; D[4,3]<-4
+for (i in 1:4){
+  for (j in 1:4){
+    D[i,j]<-D[j,i]
+  }
+}
+D<-as.dist(D)
+cluster_single<-hclust(D, method="single")
+plot(cluster_single, main="Single-linkage")
+```
+$$
+(b)\ Complete- linkage\ Hierarchical\ Clustering. 
+$$
+```{r eval=T, echo=T}
+cluster_com<-hclust(D, method="complete")
+plot(cluster_com, main="Complete-linkage")
+```
+$$
+(c)\ Average- linkage\ Hierarchical\ clustering.
+$$
+```{r eval=T, echo=T}
+cluster_ave<-hclust(D, method="average")
+plot(cluster_ave, main="Average-linkage")
+```
+$$
+__5.\ Clustering\ gene\ expression\ data__
+$$
+$$
+(a)\ Using\ full\ data,\ conduct\ hierarchical\ clustering\ to\ patients\ into\ two\ groups.
+$$
+$$
+Plot\ dendrogram\ and\ compute\ contingency\ table\ then\ apply\ independence\ test.
+$$
+```{r eval=T, echo=T}
+library(ALL)
+data(ALL)
+cl <- substr(as.character(ALL$BT), 1, 1)
+dat <- exprs(ALL)
+dist_full<-dist(t(dat))
+image(as.matrix(dist_full))
+cl_full<-hclust(dist_full, method="complete")
+plot(cl_full, labels=cl, main="hierarchical clustering with full data using complete linkage")
+abline(h=110, col="red")
+out_full<-cutree(cl_full, k=2)
+contab_full<-table(cl, out_full)
+contab_full
+fisher.test(contab_full)
+```
+$$
+(b)\ To\ improve\ clustering,\ select\ 100\ gene\ which\ have\ largest\ variation,\ and\ conduct\ the\ above\ analysis\ based\ on\ these\ selected\ variables.\ Also,\ provide\ the\ dendrogram\ and\ the\ independence\ test.\ Compare\ two\ results\ and\ describe\ your\ findings.
+$$
+```{r eval=T, echo=T}
+genes.var <- apply(dat, 1, var)
+genes.var.select <- order(genes.var, decreasing = T)[1:100]
+dat.s <- dat[genes.var.select, ]
+dist_sub<-dist(t(dat.s))
+image(as.matrix(dist_sub))
+cl_sub<-hclust(dist_sub, method="complete")
+plot(cl_sub, labels=cl,  main="hierarchical clustering with subset using complete linkage")
+abline(h=33, col="red")
+out_sub<-cutree(cl_sub, k=2)
+contab_sub<-table(out_sub, cl)
+contab_sub
+fisher.test(contab_sub)
+```
+$$
+(c)\ Apply\ a\ K-means\ clustering\ (with K = 2)\ to\ (i)\ original\ data\ and\ (ii)\ subdata\ with\ the\ 100\ top-variance\ genes.\ Compare\ clusterings\ by\ K-means\ and\ true\ classes.\ Repeat\ the\ task\ by\ using\ PAM\ clustering.\ Compare\ results\ by\ two\ algorithms.\
+$$
+```{r eval=T, echo=T}
+library(cluster)
+km_min_ssw<-function(data, k, iter){
+  ssw<-Inf
+  for (i in 1:iter){
+    km_temp<-kmeans(data, k)
+    if (sum(km_temp$withinss)<ssw){
+      out<-km_temp
+      ssw<-sum(out$withinss)
+    }
+  }
+  return(out)
+}
+
+full_km_min_ssw<-km_min_ssw(t(dat),2,30)
+contab_km_full<-table(full_km_min_ssw$cluster, cl)
+contab_km_full
+
+sub_km_min_ssw<-km_min_ssw(t(dat.s),2,30)
+contab_km_sub<-table(sub_km_min_ssw$cluster, cl)
+contab_km_sub
+
+pam_full<-pam(t(dat),2)
+plot(silhouette(pam_full), main="pam with full data")
+
+pam_sub<-pam(t(dat.s),2)
+plot(silhouette(pam_sub), main="pam with subset data")
+```
+$$
+(d)\ How\ to\ select\ the\ number\ of\ clusters\ with\ K-means?\ Run\ K-means\ with\ K = 2 : 20\ clusters\ to\ 100\ top\ variance\ genes.\ Provide\ a\ scree-type\ plot\ and\ explain\ the\ selection\ method.\ Is\ K = 2\ a\ good\ choice?\ Justify.
+$$
+```{r eval=T, echo=T}
+plot_ssw<-function(data,n){
+  ssw<-numeric(n)
+  for (j in 1:n){
+    temp<-km_min_ssw(data, j, 20)
+    ssw[j]<-sum(temp$withinss)
+  }
+  plot(ssw, main="Screeplot of ssw", xlab="# of clusters", ylab="SSW", type="l")
+  points(ssw)
+}
+
+plot_ssw(t(dat.s),20)
+```
+$$
+(e)\ Compute\ silhouette\ values\ for\ PAM\ clustering\ results\ with\ K = 2 : 20\ clusters.\ Plot\ the\ silhouette\ widths.\ Choose\ an\ optimal\ K\ according\ to\ the\ maximal\ average\ silhouette\ width.\ Compare\ silhouette\ plots\ for\ K = 2\ and\ K = 3.\ Why\ is\ K = 2\ optimal?\ Which\ observations\ are\ misclassified?\ Which\ cluster\ is\ more\ compact?\
+$$
+```{r eval=T, echo=T}
+sil_info<-list()
+for (i in 2:20){
+  sil_info[[i]]<-silhouette(pam(t(dat.s), i))
+}
+par(mfrow=c(1,1))
+for (i in 2:20){
+  plot(sil_info[[i]])
+}
+
+mean_silwidth<-numeric(19)
+for (i in 2:20){
+  mean_silwidth[(i-1)]<-mean(sil_info[[i]][,3])
+}
+mean_silwidth
+barplot(mean_silwidth, ylab="mean silhouette width", xlab="# of clusters")
+
+plot(sil_info[[2]])
+plot(sil_info[[3]])
+
+which(sil_info[[2]][,3]<0)
+which(sil_info[[3]][,3]<0)
+```
+$$
+(f)\ Cluster\ the\ 100\ top\ variance\ genes\ with\ hierarchical\ clustering.\ Provide\ a\ dendrogram\ with\ gene\ names.\ Also,\ plot\ the\ average\ silhouette\ widths\ for K = 2 : 20\ clusters\ using\ PAM\ and\ have\ a\ look\ at\ the\ silhouette\ plot\ for\ K = 2.\ Did\ we\ find\ a\ structure\ in\ the\ genes?
+$$
+```{r eval=T, echo=T}
+library(hgu95av2)
+gene.names <- sapply(rownames(dat), get, hgu95av2SYMBOL)
+gene.names <- gene.names[genes.var.select]
+
+dist_sub2<-dist(dat.s)
+cl_sub2<-hclust(dist_sub2, method="complete")
+plot(cl_sub2, labels=gene.names)
+
+ave_sil_wi<-numeric()
+for (i in 2:20){
+  ave_sil_wi[i]<-pam(dat.s, i)$silinfo$avg.width
+}
+plot(ave_sil_wi, type="b", xlab="# of clusters", ylab="Average silhouette width")
+plot(silhouette(pam(dat.s,2)))
+```
+$$
+(g)\ Provide\ a\ heatmap\ for\ the\ data\ with\ 100\ top\ variance\ genes.\ Interpret\ the\ result.
+$$
+```{r eval=T, echo=T}
+heatmap(dat.s)
+```
